@@ -1,0 +1,354 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Pokemon Battle API",
+    "version": "1.0.0",
+    "description": "API para gerenciamento de usuários e batalhas de Pokémon"
+  },
+  "servers": [
+    {
+      "url": "https://d02c3b94a890.ngrok-free.app/api",
+      "description": "Servidor de desenvolvimento"
+    }
+  ],
+  "tags": [
+    { "name": "Pokemon", "description": "Operações relacionadas aos Pokémons" }
+  ],
+  "paths": {
+    "/pokemons": {
+      "post": {
+        "summary": "Criar um novo Pokémon",
+        "tags": ["Pokemon"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreatePokemonDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pokémon criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "$ref": "#/components/schemas/PokemonResponseDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "error": { "type": "string", "example": "Dados inválidos" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": { "type": "string" },
+                          "message": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Listar todos os Pokémons",
+        "tags": ["Pokemon"],
+        "responses": {
+          "200": {
+            "description": "Lista de Pokémons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PokemonResponseDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pokemons/{id}": {
+      "get": {
+        "summary": "Buscar Pokémon por ID",
+        "tags": ["Pokemon"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID do Pokémon"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pokémon encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "$ref": "#/components/schemas/PokemonResponseDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pokémon não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "error": {
+                      "type": "string",
+                      "example": "Pokemon não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar Pokémon",
+        "tags": ["Pokemon"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID do Pokémon"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdatePokemonDto" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Pokémon atualizado com sucesso" },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "error": { "type": "string", "example": "Dados inválidos" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pokémon não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "error": {
+                      "type": "string",
+                      "example": "Pokemon não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletar Pokémon",
+        "tags": ["Pokemon"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID do Pokémon"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Pokémon deletado com sucesso" },
+          "404": {
+            "description": "Pokémon não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "error": {
+                      "type": "string",
+                      "example": "Pokemon não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pokemons/batalhar/{pokemonAId}/{pokemonBId}": {
+      "post": {
+        "summary": "Batalha entre dois Pokémons",
+        "tags": ["Pokemon"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pokemonAId",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID do primeiro Pokémon"
+          },
+          {
+            "in": "path",
+            "name": "pokemonBId",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID do segundo Pokémon"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resultado da batalha",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": { "$ref": "#/components/schemas/BattleResponseDto" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "IDs inválidos ou mesmo Pokémon",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "error": {
+                      "type": "string",
+                      "example": "IDs de Pokemon inválidos"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Um ou ambos Pokémons não encontrados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "error": {
+                      "type": "string",
+                      "example": "Um ou ambos os Pokémons não foram encontrados"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreatePokemonDto": {
+        "type": "object",
+        "required": ["tipo", "treinador"],
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "enum": ["pikachu", "charizard", "mewtwo"],
+            "description": "Tipo do Pokémon"
+          },
+          "treinador": {
+            "type": "string",
+            "description": "Nome do treinador"
+          }
+        }
+      },
+      "UpdatePokemonDto": {
+        "type": "object",
+        "properties": {
+          "treinador": {
+            "type": "string",
+            "description": "Nome do treinador"
+          }
+        }
+      },
+      "PokemonResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "tipo": { "type": "string" },
+          "treinador": { "type": "string" },
+          "nivel": { "type": "integer" }
+        }
+      },
+      "BattleResponseDto": {
+        "type": "object",
+        "properties": {
+          "vencedor": { "$ref": "#/components/schemas/PokemonResponseDto" },
+          "perdedor": { "$ref": "#/components/schemas/PokemonResponseDto" }
+        }
+      }
+    }
+  }
+}
